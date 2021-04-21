@@ -21,6 +21,10 @@ async function scrape(portal) {
         console.log(postLinks);
         console.log(`Found ${postLinks.length} post links.`);
 
+        if (portal.cleanup) {
+            portal.cleanup(postLinks);
+        }
+
         const postsScraped = [];
 
         for (let i = 0; i < postLinks.length; i++) {
