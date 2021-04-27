@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
-const { portals } = require('./common.js');
+
+const SLEEP_TIME_S = 5;
 
 async function scrape(portal) {
     let browser;
@@ -8,44 +9,16 @@ async function scrape(portal) {
         const page = await browser.newPage();
         await page.goto(portal.url);
     
-        const hrefs = await Promise.all((await page.$x(portal.evalString))
-                                    .map(async item => await (await item.getProperty('href'))
-                                    .jsonValue()));
-        
-        let postLinks = hrefs;
-
-        portal.filters.forEach(f => {
-            postLinks = postLinks.filter(f);
-        });
-
-        console.log(postLinks);
-        console.log(`Found ${postLinks.length} post links.`);
-
-        if (portal.cleanup) {
-            portal.cleanup(postLinks);
-        }
-
+        const postLinks = await getFilteredPostLinks(page, portal);
         const postsScraped = [];
 
         for (let i = 0; i < postLinks.length; i++) {
-            const postLink = postLinks[i];
+            const postInfo = await getPostInfo(postLinks[i], page, portal);
+            postsScraped.push(postInfo);
+            console.log(postInfo.title);
 
-            await page.goto(postLink);
-            await page.addScriptTag({ content: portal });
-
-            const eval1 = async titleString => document.querySelector(titleString).textContent;
-            const eval2 = async contentString => document.querySelector(contentString).textContent;
-
-            const title = await page.evaluate(eval1, portal.titleString);
-            const text = await page.evaluate(eval2, portal.contentString);
-
-            console.log(title);
-            postsScraped.push({
-                title,
-                text
-            });
+            await page.waitForTimeout(SLEEP_TIME_S*1000);
         }
-        console.log(postsScraped);
     } catch (e) {
         console.log(e);
     } finally {
@@ -53,7 +26,38 @@ async function scrape(portal) {
     }
 }
 
-Object.values(portals).forEach(portal => {
-    console.log(portal.titleString);
-    scrape(portal);
-});
+async function getFilteredPostLinks(page, portal) {
+    let postLinks = await Promise.all((await page.$x(portal.evalString))
+        .map(async item => await (await item.getProperty('href'))
+        .jsonValue())); 
+
+    portal.filters.forEach(f => {
+        postLinks = postLinks.filter(f);
+    });
+
+    if (portal.cleanup) {
+        portal.cleanup(postLinks);
+    }
+
+    return postLinks;
+}
+
+async function getPostInfo(postLink, page, portal) {
+    await page.goto(postLink);
+    await page.addScriptTag({ content: portal });
+
+    const eval1 = async titleString => document.querySelector(titleString).textContent;
+    const eval2 = async contentString => document.querySelector(contentString).textContent;
+
+    const title = await page.evaluate(eval1, portal.titleString);
+    const text = await page.evaluate(eval2, portal.contentString);
+
+    return {
+        title,
+        text,
+    }
+}
+
+module.exports = {
+    scrape
+}
