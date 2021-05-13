@@ -7,6 +7,11 @@ function insertPosts(db, posts, callback) {
     });
 }
 
+async function presentInDb(db, post) {
+    return await db.collection('posts').countDocuments({ titleHash: post.titleHash }, { limit: 1 }) === 1;
+}
+
 module.exports = {
-    insertPosts
+    insertPosts,
+    presentInDb
 }

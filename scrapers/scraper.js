@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const crypto = require('crypto');
 
-const SLEEP_TIME_S = 5;
+const SLEEP_TIME_S = 3;
 
 async function scrape(portal) {
     let browser;
@@ -14,6 +14,7 @@ async function scrape(portal) {
         const postsScraped = [];
 
         for (let i = 0; i < postLinks.length; i++) {
+            console.log(`${i+1} of ${postLinks.length} from ${postLinks[i]}`);
             const postInfo = await getPostInfo(postLinks[i], page, portal);
             postsScraped.push(postInfo);
             await page.waitForTimeout(SLEEP_TIME_S*1000);
@@ -50,12 +51,14 @@ async function getPostInfo(postLink, page, portal) {
     const eval1 = async titleString => document.querySelector(titleString).textContent;
     const eval2 = async contentString => document.querySelector(contentString).textContent;
 
-    const title = await page.evaluate(eval1, portal.titleString);
-    const text = await page.evaluate(eval2, portal.contentString);
+    const title = String(await page.evaluate(eval1, portal.titleString));
+    const text = String(await page.evaluate(eval2, portal.contentString));
+
+    const textCleaned = text.replace(/\s+/gm, " ");
 
     return {
         title,
-        text,
+        text: textCleaned,
         url: postLink,
         titleHash: crypto.createHash('md5').update(title).digest("hex"),
         textHash: crypto.createHash('md5').update(text).digest("hex"),

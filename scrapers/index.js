@@ -1,6 +1,6 @@
 const { portals } = require('./common.js');
 const { scrape } = require('./scraper.js');
-const { insertPosts } = require('./db.js');
+const { insertPosts, presentInDb } = require('./db.js');
 
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
@@ -17,8 +17,8 @@ async function scrapePosts(db, callback) {
         let safeToInsert = [];
         for (let j = 0; j < portalPosts.length; j++) {
             const post = portalPosts[j];
-            const t = await db.collection('posts').countDocuments({ titleHash: post.titleHash }, { limit: 1 });
-            if (t === 0) {
+            const inDb = await presentInDb(db, post);
+            if (!inDb) {
                 safeToInsert.push(post);
             }
         }
@@ -32,6 +32,6 @@ client.connect(async function(err) {
     assert.equal(null, err);
     const db = client.db(dbName);
     await scrapePosts(db);
-    // console.log('Closing connection...');
-    // client.close();
+    console.log('Closing connection...');
+    client.close();
 });
