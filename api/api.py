@@ -43,7 +43,6 @@ def get_this():
     print("Checking if the following name is in the text: ", check_for)
     print("Named entities found in the text: ", name_entities)
 
-
     is_in = False
     for name in name_entities:
         if check_for == name:
