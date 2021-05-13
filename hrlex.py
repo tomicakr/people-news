@@ -1,7 +1,5 @@
 import sys
 
-# lines = []
-
 with open(sys.argv[1], 'r', encoding='utf8') as lex_file:
     with open(sys.argv[2], 'w', encoding='utf8') as output:
         for line in lex_file:
@@ -13,9 +11,4 @@ with open(sys.argv[1], 'r', encoding='utf8') as lex_file:
                 fin = wordStat[:3]
                 fin.append(str(wordStat[len(wordStat) - 2]))
                 outLine = '\t'.join(fin) + '\n'
-                # lines.append(outLine)
                 output.write(outLine)
-                
-        # lines = sorted(lines, key=lambda x: -x[6])
-        # for l in lines:
-        #     print(l)

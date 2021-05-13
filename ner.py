@@ -1,5 +1,5 @@
-
 import classla
+
 classla.download('hr')
 nlp = classla.Pipeline('hr', processors='tokenize,ner,lemma')
 doc = nlp("Tomislavu Kravaršćanu Igorom Mekterovićem Josipu Miličeviću")
