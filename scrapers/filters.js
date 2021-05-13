@@ -4,7 +4,7 @@ function containsRegex(reg) {
     }
 }
 
-function removeDuplicates(value, index, self){
+function removeDuplicates(value, index, self) {
     return self.indexOf(value) === index;
 }
 
