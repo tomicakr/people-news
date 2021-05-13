@@ -7,7 +7,7 @@ with open(sys.argv[1], 'r', encoding='utf8') as lex_file:
             wordStat[6] = int(wordStat[6].strip())
             wordStat[3] = wordStat[3].split('|')
 
-            if wordStat[4] == 'PROPN' and wordStat[3][2] == 'Number=singular' and wordStat[6] > 5:
+            if wordStat[4] == 'PROPN' and wordStat[3][2] == 'Number=singular':
                 fin = wordStat[:3]
                 fin.append(str(wordStat[len(wordStat) - 2]))
                 outLine = '\t'.join(fin) + '\n'

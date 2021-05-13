@@ -16,8 +16,40 @@ with open('../lex/out1.txt', 'r', encoding='utf8') as file:
 def get_this():
     data = request.get_json()
     doc = nlp(data['text'])
+    check_for = data['check_for']
     proc = list(map(lambda x: [x['text'], x['lemma'], x['ner']],filter(lambda x: 'PER' in x['ner'], doc.to_dict()[0][0])))
 
-    return jsonify(proc)
+    name_entities = []
+    in_name = False
+    new_ent = ''
+
+    for [original, lemma, decl] in proc:
+        filtered_lines = list(sorted(filter(lambda x: x[0] == original, lines), key=lambda x: -x[-1]))
+        if len(filtered_lines) == 0:
+            continue
+
+        real = filtered_lines[0][1]
+        if decl == 'B-PER':
+            if in_name:
+                name_entities.append(new_ent)
+                new_ent = ''
+                in_name = False
+            in_name = True
+            new_ent += real
+        else:
+            new_ent += ' ' + real
+    name_entities.append(new_ent)
+
+    print("Checking if the following name is in the text: ", check_for)
+    print("Named entities found in the text: ", name_entities)
+
+
+    is_in = False
+    for name in name_entities:
+        if check_for == name:
+            is_in = True
+            break
+
+    return jsonify({'inside': is_in})
 
 app.run()
