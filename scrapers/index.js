@@ -32,6 +32,6 @@ client.connect(async function(err) {
     assert.equal(null, err);
     const db = client.db(dbName);
     await scrapePosts(db);
-    console.log('Closing connection...');
-    client.close();
+    // console.log('Closing connection...');
+    // client.close();
 });
