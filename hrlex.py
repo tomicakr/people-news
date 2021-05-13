@@ -10,7 +10,9 @@ with open(sys.argv[1], 'r', encoding='utf8') as lex_file:
             wordStat[3] = wordStat[3].split('|')
 
             if wordStat[4] == 'PROPN' and wordStat[3][2] == 'Number=singular' and wordStat[6] > 5:
-                outLine = '\t'.join(wordStat[:3]) + '\n'
+                fin = wordStat[:3]
+                fin.append(str(wordStat[len(wordStat) - 2]))
+                outLine = '\t'.join(fin) + '\n'
                 # lines.append(outLine)
                 output.write(outLine)
                 
