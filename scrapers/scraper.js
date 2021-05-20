@@ -1,7 +1,9 @@
 const puppeteer = require('puppeteer');
 const crypto = require('crypto');
+const { containsName } = require('../services/nerService.js');
 
 const SLEEP_TIME_S = 3;
+const checkName = 'Andrej Plenković';
 
 async function scrape(portal) {
     let browser;
@@ -16,6 +18,8 @@ async function scrape(portal) {
         for (let i = 0; i < postLinks.length; i++) {
             console.log(`${i+1} of ${postLinks.length} from ${postLinks[i]}`);
             const postInfo = await getPostInfo(postLinks[i], page, portal);
+            const res = await containsName(checkName, postInfo.text);
+            console.log(res);
             postsScraped.push(postInfo);
             await page.waitForTimeout(SLEEP_TIME_S*1000);
         }

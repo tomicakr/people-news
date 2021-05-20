@@ -1,7 +1,6 @@
 const { portals } = require('./common.js');
 const { scrape } = require('./scraper.js');
 const { insertPosts, presentInDb } = require('./db.js');
-
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 

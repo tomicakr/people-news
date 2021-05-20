@@ -16,7 +16,7 @@ with open('../lex/out1.txt', 'r', encoding='utf8') as file:
 def get_this():
     data = request.get_json()
     doc = nlp(data['text'])
-    check_for = data['check_for']
+    check_for = data['checkFor']
     proc = list(map(lambda x: [x['text'], x['lemma'], x['ner']],filter(lambda x: 'PER' in x['ner'], doc.to_dict()[0][0])))
 
     name_entities = []
