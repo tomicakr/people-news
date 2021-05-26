@@ -1,6 +1,7 @@
 import flask
 from flask import request, jsonify
 import classla
+import sys
 
 classla.download('hr')
 nlp = classla.Pipeline('hr', processors='tokenize,ner,lemma')
@@ -9,7 +10,7 @@ app = flask.Flask(__name__)
 # app.config["DEBUG"] = True
 
 lines = []
-with open('../lex/out1.txt', 'r', encoding='utf8') as file:
+with open(sys.argv[1], 'r', encoding='utf8') as file:
     lines = list(map(lambda x: [*x[:3], int(x[3])], map(lambda x: x.rstrip().split('\t'), file.readlines())))
 
 @app.route('/nerText', methods=['POST'])
@@ -23,7 +24,7 @@ def get_this():
     in_name = False
     new_ent = ''
 
-    for [original, lemma, decl] in proc:
+    for [original, _, decl] in proc:
         filtered_lines = list(sorted(filter(lambda x: x[0] == original, lines), key=lambda x: -x[-1]))
         if len(filtered_lines) == 0:
             continue
