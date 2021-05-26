@@ -13,7 +13,7 @@ async function scrapePosts(db, callback) {
     for (let i = 0; i < ps.length; i++) {
         const portal = ps[i];
         const portalPosts = await scrape(portal);
-        let safeToInsert = [];
+        const safeToInsert = [];
         for (let j = 0; j < portalPosts.length; j++) {
             const post = portalPosts[j];
             const inDb = await presentInDb(db, post);
