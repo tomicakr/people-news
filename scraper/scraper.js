@@ -18,9 +18,11 @@ async function scrape(portal) {
         for (let i = 0; i < postLinks.length; i++) {
             console.log(`${i+1} of ${postLinks.length} from ${postLinks[i]}`);
             const postInfo = await getPostInfo(postLinks[i], page, portal);
-            const res = await containsName(checkName, postInfo.text);
-            console.log(res);
-            postsScraped.push(postInfo);
+            if (postInfo) {
+                const res = await containsName(checkName, postInfo.text);
+                console.log(res);
+                postsScraped.push(postInfo);
+            }
             await page.waitForTimeout(SLEEP_TIME_S*1000);
         }
 
@@ -49,25 +51,31 @@ async function getFilteredPostLinks(page, portal) {
 }
 
 async function getPostInfo(postLink, page, portal) {
-    await page.goto(postLink);
-    await page.addScriptTag({ content: portal });
-
-    const eval1 = async titleString => document.querySelector(titleString).textContent;
-    const eval2 = async contentString => document.querySelector(contentString).textContent;
-
-    const title = String(await page.evaluate(eval1, portal.titleString));
-    const text = String(await page.evaluate(eval2, portal.contentString));
-
-    const textCleaned = text.replace(/\s+/gm, " ");
-
-    return {
-        title,
-        text: textCleaned,
-        url: postLink,
-        titleHash: crypto.createHash('md5').update(title).digest("hex"),
-        textHash: crypto.createHash('md5').update(text).digest("hex"),
-        urlHash: crypto.createHash('md5').update(postLink).digest("hex"),
+    try {
+        await page.goto(postLink);
+        await page.addScriptTag({ content: portal });
+    
+        const eval1 = async titleString => document.querySelector(titleString).textContent;
+        const eval2 = async contentString => document.querySelector(contentString).textContent;
+    
+        const title = String(await page.evaluate(eval1, portal.titleString));
+        const text = String(await page.evaluate(eval2, portal.contentString));
+    
+        const textCleaned = text.replace(/\s+/gm, " ");
+    
+        return {
+            title,
+            text: textCleaned,
+            url: postLink,
+            titleHash: crypto.createHash('md5').update(title).digest("hex"),
+            textHash: crypto.createHash('md5').update(text).digest("hex"),
+            urlHash: crypto.createHash('md5').update(postLink).digest("hex"),
+        }
+    } catch(err) {
+        console.error(`Error: ${postLink}, ${err}`);
     }
+
+    return null;
 }
 
 module.exports = {

@@ -24,7 +24,8 @@ def get_this():
     in_name = False
     new_ent = ''
 
-    for [original, _, decl] in proc:
+    for [original, lemma, decl] in proc:
+        print(original, lemma, decl)
         filtered_lines = list(sorted(filter(lambda x: x[0] == original, lines), key=lambda x: -x[-1]))
         if len(filtered_lines) == 0:
             continue
