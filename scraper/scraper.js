@@ -59,17 +59,23 @@ async function getPostInfo(postLink, page, portal) {
         const eval2 = async contentString => document.querySelector(contentString).textContent;
     
         const title = String(await page.evaluate(eval1, portal.titleString));
-        const text = String(await page.evaluate(eval2, portal.contentString));
+
+        let text;
+        if (portal.specificTextGetter) {
+            text = await portal.specificTextGetter(page);
+        } else {
+            text = String(await page.evaluate(eval2, portal.contentString));
+        }
     
-        const textCleaned = text.replace(/\s+/gm, " ");
+        const textCleaned = text.replace(/\s+/gm, ' ');
     
         return {
             title,
             text: textCleaned,
             url: postLink,
-            titleHash: crypto.createHash('md5').update(title).digest("hex"),
-            textHash: crypto.createHash('md5').update(text).digest("hex"),
-            urlHash: crypto.createHash('md5').update(postLink).digest("hex"),
+            titleHash: crypto.createHash('md5').update(title).digest('hex'),
+            textHash: crypto.createHash('md5').update(text).digest('hex'),
+            urlHash: crypto.createHash('md5').update(postLink).digest('hex'),
         }
     } catch(err) {
         console.error(`Error: ${postLink}, ${err}`);
@@ -79,5 +85,6 @@ async function getPostInfo(postLink, page, portal) {
 }
 
 module.exports = {
-    scrape
+    scrape,
+    getPostInfo
 }

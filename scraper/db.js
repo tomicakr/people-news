@@ -11,7 +11,12 @@ async function presentInDb(db, post) {
     return await db.collection('posts').countDocuments({ titleHash: post.titleHash }, { limit: 1 }) === 1;
 }
 
+async function getDocument(db, url) {
+    return await db.collection('posts').findOne({ url: url });
+}
+
 module.exports = {
     insertPosts,
-    presentInDb
+    presentInDb,
+    getDocument
 }

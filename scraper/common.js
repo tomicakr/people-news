@@ -9,7 +9,22 @@ const portals = {
         filters: [
             containsRegex(/-\d+$/),
             removeDuplicates
-        ]
+        ],
+        async specificTextGetter(page) {
+            const paragraphs = await page.$x('//div[@class="article__body--main_content"]//p');
+            let content = '';
+            // for (let i = 0; i < paragraphs.length; i++) {
+            //     if (i === 4) break;
+            //     const p = await paragraphs[i].getProperty('textContent');
+            //     const text = p._remoteObject.value;
+            //     console.log(i, text)
+            //     content += ' ' + text.trim();
+            // }
+            
+            const p = await paragraphs[2].getProperty('textContent');
+            content = p._remoteObject.value;
+            return content;
+        }
     },
     jutarnji: {
         url: 'http://jutarnji.hr/vijesti/',
