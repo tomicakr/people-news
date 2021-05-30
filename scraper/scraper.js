@@ -1,9 +1,10 @@
 const puppeteer = require('puppeteer');
 const crypto = require('crypto');
 const { containsName } = require('../services/nerService.js');
+const { resolveSoa } = require('dns');
 
 const SLEEP_TIME_S = 3;
-const checkName = 'Andrej Plenković';
+const checkNames = ['Andrej Plenković'];
 
 async function scrape(portal) {
     let browser;
@@ -19,9 +20,17 @@ async function scrape(portal) {
             console.log(`${i+1} of ${postLinks.length} from ${postLinks[i]}`);
             const postInfo = await getPostInfo(postLinks[i], page, portal);
             if (postInfo) {
-                const res = await containsName(checkName, postInfo.text);
+                const res = await containsName(checkNames, postInfo.text);
                 console.log(res);
-                postsScraped.push(postInfo);
+                for (let i = 0; i < res.length; i++) {
+                    const ent = res[i];
+                    if (ent.anyNameInside) {
+                        console.log('Found, moving to db');
+                        postsScraped.push(postInfo);
+                        break;
+                    }
+                }
+
             }
             await page.waitForTimeout(SLEEP_TIME_S*1000);
         }
@@ -64,17 +73,17 @@ async function getPostInfo(postLink, page, portal) {
         if (portal.specificTextGetter) {
             text = await portal.specificTextGetter(page);
         } else {
-            text = String(await page.evaluate(eval2, portal.contentString));
+            text = [String(await page.evaluate(eval2, portal.contentString))];
         }
-    
-        const textCleaned = text.replace(/\s+/gm, ' ');
-    
+        console.log(text)
+
+        text = text.map((paragraph) => paragraph.replace(/\s+/gm, ' ')); // clean from unnecessary \n and spaces
         return {
             title,
-            text: textCleaned,
+            text,
             url: postLink,
             titleHash: crypto.createHash('md5').update(title).digest('hex'),
-            textHash: crypto.createHash('md5').update(text).digest('hex'),
+            textHash: crypto.createHash('md5').update(text.join()).digest('hex'),
             urlHash: crypto.createHash('md5').update(postLink).digest('hex'),
         }
     } catch(err) {

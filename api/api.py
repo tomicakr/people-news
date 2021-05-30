@@ -19,7 +19,7 @@ def get_this():
     doc = nlp(data['text'])
     print(data['text'])
     check_for = data['checkFor']
-    proc = list(map(lambda x: [x['text'], x['lemma'], x['ner']],filter(lambda x: 'PER' in x['ner'], doc.to_dict()[0][0])))
+    proc = list(map(lambda x: [x['text'], x['lemma'], x['ner']],filter(lambda x: 'B-PER' in x['ner'] or 'I-PER' in x['ner'], doc.to_dict()[0][0])))
     print(proc)
     name_entities = []
     in_name = False
@@ -40,23 +40,28 @@ def get_this():
                 new_ent = ''
                 in_name = False
             in_name = True
-            new_ent += real.capitalize()
+            new_ent += real.strip().capitalize()
         else:
-            new_ent += ' ' + real.capitalize()
+            new_ent += ' ' + real.strip().capitalize()
     name_entities.append(new_ent)
 
     print("Checking if the following name is in the text: ", check_for)
     print("Named entities found in the text: ", name_entities)
 
+    result = {}
     is_in = False
-    for name in name_entities:
-        if check_for == name:
-            is_in = True
-            break
+    for to_check in check_for:
+        result[to_check] = False
+        for name in name_entities:
+            if to_check == name:
+                result[to_check] = True
+                is_in = True
+                break
 
     return jsonify({
-        'inside': is_in,
-        'found_named_entities': name_entities
+        'anyNameInside': is_in,
+        'checkedNamedEntities': result,
+        'foundNamedEntities': name_entities
         })
 
 app.run()

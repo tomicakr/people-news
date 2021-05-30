@@ -13,11 +13,9 @@ async function scrape(portal) {
         const postInfo = await getPostInfo(postLink, page, portal);
 
         if (postInfo) {
-            const res = await containsName('some name', postInfo.text);
+            const res = await containsName(['some name', 'some other name'], postInfo.text);
             console.log(res);
         }
-    } catch (e) {
-        console.log(e);
     } finally {
         browser.close();
     }
