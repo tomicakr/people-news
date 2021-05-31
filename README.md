@@ -1,5 +1,9 @@
 # people-news
 
+Project for extracting the posts from a few Croatian portals, which contain the any of the names in the given set. 
+
+SETUP
+
 First install mongodb, start it and run the following:
 
 ```javascript
