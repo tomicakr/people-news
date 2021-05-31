@@ -20,3 +20,7 @@ node ./scraper/index.js # start the scraping service
 # TESTING
 node testScrape.js # write the wanted parameters in the constants on top first, you need to have the python api running
 ```
+
+Works with:
+Python 3.8.10
+NodeJS v14.16.0
