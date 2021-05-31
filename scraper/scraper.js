@@ -19,8 +19,9 @@ async function scrape(portal) {
             console.log(`${i+1} of ${postLinks.length} from ${postLinks[i]}`);
             const postInfo = await getPostInfo(postLinks[i], page, portal);
             if (postInfo) {
-                const res = await containsName(checkNames, postInfo.text);
-                console.log(res);
+                const res = await containsName(checkNames, postInfo.text, postInfo.url);
+                console.log(res.allNamedEntities);
+                console.log(res.containsCheckedSet);
                 for (let i = 0; i < res.length; i++) {
                     const ent = res[i];
                     if (ent.anyNameInside) {
@@ -74,9 +75,10 @@ async function getPostInfo(postLink, page, portal) {
         } else {
             text = [String(await page.evaluate(eval2, portal.contentString))];
         }
-        console.log(text)
 
-        text = text.map((paragraph) => paragraph.replace(/\s+/gm, ' ')); // clean from unnecessary \n and spaces
+        text = text.map((paragraph) => paragraph.replace(/\s+/gm, ' '));
+        // console.log(text)
+
         return {
             title,
             text,

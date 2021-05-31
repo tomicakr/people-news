@@ -10,7 +10,7 @@ const client = new MongoClient(url, {useNewUrlParser: true, useUnifiedTopology: 
 const postUrl = 'https://www.vecernji.hr/vijesti/vrbanovic-nece-danas-u-remetinac-trazio-je-odgodu-zbog-bolesti-1495383';
 async function testThis(db, callback) {
     const doc = await getDocument(db, postUrl);
-    const res = await containsName('Lara Samošćanec', doc.title + ' ' + doc.text);
+    const res = await containsName('Lara Samošćanec', doc.title + ' ' + doc.text, postUrl);
     console.log(res);
 }
 

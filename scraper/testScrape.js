@@ -3,7 +3,7 @@ const { getPostInfo } = require('./scraper.js');
 const puppeteer = require('puppeteer');
 const { containsName } = require('../services/nerService.js');
 
-const postLink = 'https://www.vecernji.hr/vijesti/vrbanovic-nece-danas-u-remetinac-trazio-je-odgodu-zbog-bolesti-1495383';
+const postLink = 'https://www.ictbusiness.info/vijesti/etf-airways-predstavio-prvi-svoj-putnicki-zrakoplov-u-puli-a-najavljen-skori-dolazak-jos-jednog';
 
 async function scrape(portal) {
     let browser;
@@ -13,7 +13,7 @@ async function scrape(portal) {
         const postInfo = await getPostInfo(postLink, page, portal);
 
         if (postInfo) {
-            const res = await containsName(['some name', 'some other name'], postInfo.text);
+            const res = await containsName(['Marko Banković', 'some other name'], postInfo.text, postLink);
             console.log(res);
         }
     } finally {
@@ -21,4 +21,4 @@ async function scrape(portal) {
     }
 }
 
-scrape(portals.vecernji);
+scrape(portals.ictbusiness);
