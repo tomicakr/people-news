@@ -1,7 +1,6 @@
 const puppeteer = require('puppeteer');
 const crypto = require('crypto');
 const { containsName } = require('../services/nerService.js');
-const { resolveSoa } = require('dns');
 
 const SLEEP_TIME_S = 3;
 const checkNames = ['Andrej Plenković'];
