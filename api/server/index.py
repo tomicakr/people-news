@@ -30,4 +30,4 @@ def get_recent_posts():
         posts_res.append(to_post(p))
     return jsonify(posts_res)
 
-app.run()
+app.run(port=3000)

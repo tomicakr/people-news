@@ -17,7 +17,7 @@ export default {
     }
   },
   async created() {
-    const res = await axios.get('http://localhost:5000/posts?count=10')
+    const res = await axios.get('http://localhost:3000/posts?count=10')
     if (res && res.data) {
       this.posts = res.data
     }
