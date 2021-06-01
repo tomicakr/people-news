@@ -13,9 +13,11 @@ db.posts.createIndex( { hash: 1 }, { unique: true } ) // create index, do this i
 Then do this in the root of the project:
 
 ```bash
-npm install
-pip3 install flask # this is used to create an api
-pip3 install pymongo
+
+Installation:
+npm install # in root
+npm install # in web-app
+pip3 install -r requirements.txt # in root
 
 python3.8 hrlex.py <lex-file> <output-file> # process lex file and output only names in the output file
 
