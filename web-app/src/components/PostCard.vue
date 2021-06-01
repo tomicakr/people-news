@@ -17,8 +17,6 @@ export default {
 
 <style scoped>
 .post-card {
-  background-color: red;
-  margin-bottom: 10px;
-  border-radius: 10%;
+  background: red;
 }
 </style>

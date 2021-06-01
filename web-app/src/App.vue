@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="posts-grid">
     <PostCard 
       v-for="post in posts" 
       :key="post.hash" 
@@ -32,4 +32,9 @@ export default {
 </script>
 
 <style>
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: minmax(100px, auto);
+}
 </style>
