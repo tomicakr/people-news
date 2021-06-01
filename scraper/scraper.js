@@ -77,7 +77,6 @@ async function getPostInfo(postLink, page, portal) {
         }
 
         text = text.map((paragraph) => paragraph.replace(/\s+/gm, ' '));
-        // console.log(text)
 
         return {
             title,
