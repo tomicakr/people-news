@@ -10,7 +10,7 @@ app = flask.Flask(__name__)
 # app.config["DEBUG"] = True
 
 lines = []
-with open(sys.argv[1], 'r', encoding='utf8') as file:
+with open('./resources/names.txt', 'r', encoding='utf8') as file:
     lines = list(map(lambda x: [*x[:3], int(x[3])], map(lambda x: x.rstrip().split('\t'), file.readlines())))
 
 called = {}
@@ -73,12 +73,12 @@ def get_this():
         called[link] = set(name_entities)
 
         if lastCalled['link'] != '' and lastCalled['link'] != link:
-            with open('./apiLog.txt', 'a', encoding='utf8') as log:
+            with open('./logs/apiLog.txt', 'a', encoding='utf8') as log:
                 log.write(lastCalled['link'] + '\t' + str(called[lastCalled['link']])+'\n')
 
         lastCalled['link'] = link
 
-    with open('./detailedApiLog.txt', 'a', encoding='utf8') as log:
+    with open('./logs/detailedApiLog.txt', 'a', encoding='utf8') as log:
         s = link + '\t' + str(name_entities)
         log.write(s+'\n')
 

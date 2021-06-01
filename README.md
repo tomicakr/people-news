@@ -15,10 +15,12 @@ Then do this in the root of the project:
 ```bash
 npm install
 pip3 install flask # this is used to create an api
+pip3 install pymongo
 
-python hrlex.py <lex-file> <output-file> # process lex file and output only names in the output file
+python3.8 hrlex.py <lex-file> <output-file> # process lex file and output only names in the output file
 
-python ./api/api.py ./api/names.txt # start server for ner, names.txt contains all names in croatian language, along with their frequencies
+python3.8 ./api/api.py # start server for ner
+python3.8 ./api/server.py # start server for serving posts from db
 node ./scraper/index.js # start the scraping service
 
 # TESTING
