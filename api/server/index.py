@@ -1,9 +1,10 @@
 from flask import request, jsonify, Flask
 from pymongo import MongoClient
 from db_models import to_post
-import flask
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 client = MongoClient('mongodb://localhost:27017/')
 db = client.newsPosts
 posts = db.posts

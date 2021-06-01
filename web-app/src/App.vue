@@ -1,17 +1,26 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    {{posts}}
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import axios from 'axios'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+  },
+  data() {
+    return {
+      posts: null
+    }
+  },
+  async created() {
+    const res = await axios.get('http://localhost:5000/posts?count=10')
+    if (res && res.data) {
+      this.posts = res.data
+    }
   }
 }
 </script>
