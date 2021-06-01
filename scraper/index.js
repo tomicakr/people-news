@@ -18,7 +18,10 @@ async function scrapePosts(db, callback) {
             const post = portalPosts[j];
             const inDb = await presentInDb(db, post);
             if (!inDb) {
-                safeToInsert.push(post);
+                safeToInsert.push({
+                    ...post,
+                    dateAdded: new Date()
+                });
             }
         }
         if (safeToInsert.length) {
