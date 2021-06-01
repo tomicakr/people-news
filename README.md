@@ -20,7 +20,7 @@ pip3 install pymongo
 python3.8 hrlex.py <lex-file> <output-file> # process lex file and output only names in the output file
 
 python3.8 ./api/api.py # start server for ner
-python3.8 ./api/server.py # start server for serving posts from db
+python3.8 ./api/server/index.py # start server for serving posts from db
 node ./scraper/index.js # start the scraping service
 
 # TESTING
