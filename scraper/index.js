@@ -1,6 +1,6 @@
 const { portals } = require('./common.js');
 const { scrape } = require('./scraper.js');
-const { insertPosts, presentInDb } = require('./db.js');
+const { insertManyPosts, postPresentInDb } = require('./db.js');
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 
@@ -16,8 +16,9 @@ async function scrapePosts(db, callback) {
         const safeToInsert = [];
         for (let j = 0; j < portalPosts.length; j++) {
             const post = portalPosts[j];
-            const inDb = await presentInDb(db, post);
+            const inDb = await postPresentInDb(db, post);
             if (!inDb) {
+                console.log(`Will insert: ${post.url}`);
                 safeToInsert.push({
                     ...post,
                     dateAdded: new Date()
@@ -25,7 +26,8 @@ async function scrapePosts(db, callback) {
             }
         }
         if (safeToInsert.length) {
-            insertPosts(db, safeToInsert, callback);
+            console.log('Inserting bulk...');
+            insertManyPosts(db, safeToInsert, callback);
         }
     }
 }
@@ -34,6 +36,9 @@ client.connect(async function(err) {
     assert.equal(null, err);
     const db = client.db(dbName);
     await scrapePosts(db);
-    console.log('Closing connection...');
-    client.close();
+    console.log('Done. Will close DB connection after 5 seconds...');
+    setTimeout(() => {
+        console.log('Closing DB connection...');
+        client.close();
+    }, 5000);
 });

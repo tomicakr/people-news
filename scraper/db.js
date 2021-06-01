@@ -1,22 +1,30 @@
-function insertPosts(db, posts, callback) {
+function insertOnePost(db, post, callback) {
     const collection = db.collection('posts');
+    collection.insertOne(post, function(err, result) {
+        callback && callback(result);
+        err && console.log(err);
+    });
+}
 
+function insertManyPosts(db, posts, callback) {
+    const collection = db.collection('posts');
     collection.insertMany(posts, function(err, result) {
         callback && callback(result);
         err && console.log(err);
     });
 }
 
-async function presentInDb(db, post) {
-    return await db.collection('posts').countDocuments({ titleHash: post.titleHash }, { limit: 1 }) === 1;
+async function postPresentInDb(db, post) {
+    return await db.collection('posts').countDocuments({ hash: post.hash }, { limit: 1 }) === 1;
 }
 
-async function getDocument(db, url) {
+async function getPostWithUrl(db, url) {
     return await db.collection('posts').findOne({ url: url });
 }
 
 module.exports = {
-    insertPosts,
-    presentInDb,
-    getDocument
+    insertOnePost,
+    insertManyPosts,
+    postPresentInDb,
+    getPostWithUrl
 }

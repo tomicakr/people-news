@@ -20,17 +20,10 @@ async function scrape(portal) {
             const postInfo = await getPostInfo(postLinks[i], page, portal);
             if (postInfo) {
                 const res = await containsName(checkNames, postInfo.text, postInfo.url);
-                console.log(res.allNamedEntities);
-                console.log(res.containsCheckedSet);
-                for (let i = 0; i < res.length; i++) {
-                    const ent = res[i];
-                    if (ent.anyNameInside) {
-                        console.log('Found, moving to db');
-                        postsScraped.push(postInfo);
-                        break;
-                    }
-                }
-
+                postsScraped.push({
+                    ...postInfo,
+                    names: Array.from(res.allNamedEntities),
+                });
             }
             await page.waitForTimeout(SLEEP_TIME_S*1000);
         }
@@ -82,9 +75,7 @@ async function getPostInfo(postLink, page, portal) {
             title,
             text,
             url: postLink,
-            titleHash: crypto.createHash('md5').update(title).digest('hex'),
-            textHash: crypto.createHash('md5').update(text.join()).digest('hex'),
-            urlHash: crypto.createHash('md5').update(postLink).digest('hex'),
+            hash: crypto.createHash('md5').update(postLink + ' ' + title).digest('hex'),
         }
     } catch(err) {
         console.error(`Error: ${postLink}, ${err}`);

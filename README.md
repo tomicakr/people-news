@@ -7,7 +7,7 @@ SETUP
 First install mongodb, start it and run the following:
 
 ```javascript
-db.posts.createIndex( { titleHash: 1 }, { unique: true } ) // create index, do this inside mongo console
+db.posts.createIndex( { hash: 1 }, { unique: true } ) // create index, do this inside mongo console
 ```
 
 Then do this in the root of the project:
