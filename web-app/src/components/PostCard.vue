@@ -4,6 +4,7 @@
     <div class="post-title">{{post.title}}</div>
     <div class="post-summary">{{postSummary}}</div>
     <!-- <div class="post-names">{{post.names}}</div> -->
+    <div class="post-date">{{post.dateAdded}}</div>
   </div>
 </template>
 
@@ -29,6 +30,9 @@ export default {
 <style>
 .post-card {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
   background: lightgreen;
   border-radius: 10px;
   padding: 10px;
@@ -45,6 +49,11 @@ export default {
   font-weight: 600;
   font-size: 20px;
 }
+
+.post-summary {
+  margin-bottom: 10px;
+}
+
 .full-link {
   position: absolute;
   height: 100%;

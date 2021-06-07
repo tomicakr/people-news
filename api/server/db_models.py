@@ -5,4 +5,5 @@ def to_post(db_object):
         'text': db_object['text'],
         'hash': db_object['hash'],
         'names': db_object['names'],
+        'dateAdded': db_object['dateAdded'],
     }
