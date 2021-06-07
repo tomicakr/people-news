@@ -1,40 +1,21 @@
 <template>
-  <div id="posts-grid">
-    <PostCard 
-      v-for="post in posts" 
-      :key="post.hash" 
-      :post="post">
-    </PostCard>
-  </div>
+  <PostsContainer />
 </template>
 
 <script>
-import PostCard from './components/PostCard'
-import axios from 'axios'
+import PostsContainer from './components/PostsContainer.vue'
 
 export default {
   name: 'App',
   components: {
-    PostCard
+    PostsContainer
   },
-  data() {
-    return {
-      posts: null
-    }
-  },
-  async created() {
-    const res = await axios.get('http://localhost:3000/posts?count=10')
-    if (res && res.data) {
-      this.posts = res.data
-    }
-  }
+  
 }
 </script>
 
 <style>
-.posts-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: minmax(100px, auto);
+body {
+  font-family: Georgia, serif;
 }
 </style>
