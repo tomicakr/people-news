@@ -19,3 +19,16 @@ export function summarize(paragraphs) {
 
     return summary
 }
+
+export function concat(names) {
+  let res = ''
+  names.forEach((name, index) => {
+    if (index < names.length - 1){
+      res += name + ', '
+    } else {
+      res += name
+    }
+  });
+
+  return res
+}

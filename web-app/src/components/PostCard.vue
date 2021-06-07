@@ -3,13 +3,13 @@
     <a class="full-link" :href="post.url"></a>
     <div class="post-title">{{post.title}}</div>
     <div class="post-summary">{{postSummary}}</div>
-    <!-- <div class="post-names">{{post.names}}</div> -->
-    <div class="post-date">{{post.dateAdded}}</div>
+    <div class="post-date"><strong>Date:</strong> {{post.dateAdded}}</div>
+    <div v-if="postNames.length" class="post-names"><strong>Mentions:</strong> {{postNames}}</div>
   </div>
 </template>
 
 <script>
-import { summarize } from '../util/textHelpers'
+import { summarize, concat } from '../util/textHelpers'
 
 export default {
   name: 'PostCard',
@@ -18,11 +18,13 @@ export default {
   },
   data() {
     return {
-      postSummary: ''
+      postSummary: '',
+      postNames: ''
     }
   },
   created() {
     this.postSummary = summarize(this.post.text)
+    this.postNames = concat(this.post.names)
   }
 }
 </script>
@@ -60,5 +62,9 @@ export default {
   width: 100%;
   margin-left: -10px;
   margin-top: -10px;
+}
+
+.post-date {
+  margin-bottom: 10px;
 }
 </style>
