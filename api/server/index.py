@@ -55,6 +55,14 @@ def get_recent_by_group(group_name):
         posts_res.append(to_post(p))
     return jsonify(posts_res)
 
+@app.route('/groupnames', methods=['GET'])
+def get_all_group_names():
+    groups_db = groups.find({}, { 'groupName': 1 })
+    names_return = []
+    for g in groups_db:
+        names_return.append(g['groupName'])
+    return jsonify(names_return)
+
 @app.route('/add_group', methods=['POST'])
 def add_group():
     obj = request.get_json()
