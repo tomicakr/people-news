@@ -4,19 +4,26 @@
       <button 
         :style="{visibility: current !== 0 ? 'visible' : 'hidden'}" 
         class="nav-button previous" 
-        @click="getPage(current-1)">
+        @click="getPage(current-1, selectedGroup)">
           prev
       </button>
       <button 
         :style="{visibility: isEnd ? 'hidden' : 'visible'}"
         class="nav-button next" 
-        @click="getPage(current+1)">
+        @click="getPage(current+1, selectedGroup)">
           next
       </button>
       <span 
-        :style="{visibility: loadingPosts ? 'visible' : 'hidden'}">
+        :style="{visibility: loadingPosts ? 'visible' : 'hidden'}"
+        class="loader">
           Loading posts...
       </span>
+      <div class='selector'>
+        <select v-model="selectedGroup" @change="onSelectChange($event)">
+            <option value="all" selected>all</option>
+            <option v-for="name in groupNames" :key="name" :value="name">{{name}}</option>
+        </select>
+      </div>
     </div>
 
     <div class="posts-grid">
@@ -44,16 +51,19 @@ export default {
       current: 0,
       isEnd: false,
       loadingPosts: false,
+      selectedGroup: 'all',
+      groupNames: null
     }
   },
   async created() {
-    this.getPage.bind(this)(0)
+    this.getGroupNames()
+    this.getPage.bind(this)(0, 'all')
   },
   methods: {
-    async getPage(page) {
+    async getPage(page, group) {
       this.current = page
       this.loadingPosts = true
-      const res = await axios.get(`http://localhost:3000/posts?start=${page*10}&count=10`)
+      const res = await axios.get(`http://localhost:3000/posts?start=${page*10}&count=10&group=${group}`)
       if (res && res.data) {
         this.posts = res.data
       }
@@ -63,6 +73,16 @@ export default {
         this.isEnd = false
       }
       this.loadingPosts = false
+    },
+    async getGroupNames() {
+      const res = await axios.get(`http://localhost:3000/groupnames`)
+      console.log(res.data)
+      if (res && res.data) {
+        this.groupNames = res.data
+      }
+    },
+    onSelectChange(event) {
+      this.getPage(0, event.target.value);
     }
   }
 }
@@ -112,6 +132,10 @@ export default {
   padding-right: 10px;
   padding-left: 10px;
   border-radius: 11%;
+}
+
+.loader {
+  margin-right: 10px;
 }
 
 .nav-button:hover {
