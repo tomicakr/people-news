@@ -49,10 +49,10 @@ def get_recent_by_group():
 
 @app.route('/groupnames', methods=['GET'])
 def get_all_group_names():
-    groups_db = groups.find({}, { 'groupName': 1 })
+    groups_db = groups.find({}, { 'groupName': 1, 'groupFullName': 1 })
     names_return = []
     for g in groups_db:
-        names_return.append(g['groupName'])
+        names_return.append({'groupName': g['groupName'], 'groupFullName': g['groupFullName']})
     return jsonify(names_return)
 
 @app.route('/add_group', methods=['POST'])

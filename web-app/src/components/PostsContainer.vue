@@ -20,8 +20,8 @@
       </span>
       <div class='selector'>
         <select v-model="selectedGroup" @change="onSelectChange($event)">
-            <option value="all" selected>all</option>
-            <option v-for="name in groupNames" :key="name" :value="name">{{name}}</option>
+            <option value="all" selected>Svi postovi</option>
+            <option v-for="name in groupNames" :key="name.groupName" :value="name.groupName">{{name.groupFullName}}</option>
         </select>
       </div>
     </div>
