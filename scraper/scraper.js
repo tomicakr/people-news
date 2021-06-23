@@ -2,8 +2,8 @@ const puppeteer = require('puppeteer');
 const crypto = require('crypto');
 const { containsName } = require('../services/nerService.js');
 
-const SLEEP_TIME_S = 3;
-const checkNames = ['Andrej Plenković'];
+const SLEEP_TIME_S = 5;
+const checkNames = ['No Name'];
 
 async function scrape(portal) {
     let browser;

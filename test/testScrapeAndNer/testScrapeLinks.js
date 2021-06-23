@@ -20,6 +20,8 @@ function getPortalForLink(link) {
     }
 }
 
+const SLEEP_TIME_S = 3;
+
 
 // Tests scraping from a set of links
 // Tests NER for those links - nerAPI has to be running

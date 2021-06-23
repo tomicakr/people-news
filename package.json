@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "mongodb": "^3.6.6",
+    "node-cron": "^3.0.0",
     "puppeteer": "^8.0.0"
   }
 }

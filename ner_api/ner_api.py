@@ -30,8 +30,10 @@ def get_this():
 
     proc = list(map(lambda x: [x['text'], x['lemma'], x['ner']],filter(lambda x: 'B-PER' in x['ner'] or 'I-PER' in x['ner'], proc)))
     name_entities = []
+    original_name_entities = []
     in_name = False
     new_ent = ''
+    original_ent = ''
 
     for [original, lemma, decl] in proc:
         filtered_lines = list(sorted(filter(lambda x: x[0] == original, lines), key=lambda x: -x[-1]))
@@ -44,34 +46,44 @@ def get_this():
         if decl == 'B-PER':
             if in_name:
                 name_entities.append(new_ent)
+                original_name_entities.append(original_ent)
                 new_ent = ''
+                original_ent = ''
                 in_name = False
             in_name = True
             new_ent += real.strip().capitalize()
+            original_ent += original.strip().capitalize()
         else:
             new_ent += ' ' + real.strip().capitalize()
+            original_ent += ' ' + original.strip().capitalize()
 
     if new_ent != '':
         name_entities.append(new_ent)
+    if original_ent != '':
+        original_name_entities.append(original_ent)
 
     print('Request for {}'.format(link))
     print('Found:', name_entities)
+    print('Original found:', original_name_entities)
 
     result = {}
     is_in = False
     for to_check in check_for:
         result[to_check] = False
-        for name in name_entities:
-            if to_check == name:
+        for i in range(len(name_entities)):
+            name = name_entities[i]
+            original = original_name_entities[i]
+            if to_check == name or to_check == original:
                 result[to_check] = True
                 is_in = True
                 break
 
+    name_entities.extend(original_name_entities)
     res = {
         'anyNameInside': is_in,
         'checkedNamedEntities': result,
         'foundNamedEntities': name_entities
-        }
+    }
 
     if link in called:
         called[link].update(name_entities)
