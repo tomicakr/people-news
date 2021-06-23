@@ -24,9 +24,9 @@ function getPortalForLink(link) {
 // Tests scraping from a set of links
 // Tests NER for those links - nerAPI has to be running
 async function scrapeTest(portal) {
-    const data = fs.readFileSync('../api/link_testing/links.txt', 'utf8')
-    const lines = data.split('\n')
-    const links = lines.map(line => line.trim())
+    const data = fs.readFileSync('linksForTest.txt', 'utf8');
+    const lines = data.split('\n');
+    const links = lines.map(line => line.trim());
 
     let browser;
     try {
@@ -35,15 +35,15 @@ async function scrapeTest(portal) {
 
         for (let i = 0; i < links.length; i++) {
             const link = links[i];
-            console.log('here')
             const postInfo = await getPostInfo(link, page, portals[getPortalForLink(link)]);
 
             if (postInfo) {
                 const res = await containsName([], postInfo.text, link);
                 console.log(res);
             }
+
+            await page.waitForTimeout(SLEEP_TIME_S*1000);
         }
-        
     } finally {
         browser.close();
     }
