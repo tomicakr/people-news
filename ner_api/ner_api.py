@@ -22,7 +22,13 @@ def get_this():
     doc = nlp(data['text'])
     link = data['link']
     check_for = data['checkFor']
-    proc = list(map(lambda x: [x['text'], x['lemma'], x['ner']],filter(lambda x: 'B-PER' in x['ner'] or 'I-PER' in x['ner'], doc.to_dict()[0][0])))
+
+    proc = []
+    sentences = map(lambda x: x[0],doc.to_dict())
+    for x in sentences:
+        proc.extend(x)
+
+    proc = list(map(lambda x: [x['text'], x['lemma'], x['ner']],filter(lambda x: 'B-PER' in x['ner'] or 'I-PER' in x['ner'], proc)))
     name_entities = []
     in_name = False
     new_ent = ''

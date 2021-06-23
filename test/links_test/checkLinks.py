@@ -1,6 +1,6 @@
 
-with open('apiLog.txt', 'r', encoding='utf-8') as found_names:
-    with open('links-solved.txt', 'r', encoding='utf-8') as annotated_names:
+with open('links_with_found_names.txt', 'r', encoding='utf-8') as found_names:
+    with open('links_annotated.txt', 'r', encoding='utf-8') as annotated_names:
         found = list(map(lambda x: [x[0], x[1].split(',')], map(lambda x: x.rstrip().split('\t'), found_names.readlines())))
         found_dict = {}
         for link, names in found:

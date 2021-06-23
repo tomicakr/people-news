@@ -107,3 +107,4 @@ dist
 reldi-lib
 lex
 .DS_Store
+__pycache__
