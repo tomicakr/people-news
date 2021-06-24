@@ -10,11 +10,9 @@ db = client.newsPosts
 posts = db.posts
 groups = db.groups
 
-# get one post
 @app.route('/post/<title_hash>', methods=['GET'])
 def get_post(title_hash):
     db_post = posts.find_one({ 'titleHash': title_hash })
-    print(db_post)
     return jsonify(to_post(db_post))
 
 @app.route('/posts', methods=['GET'])
