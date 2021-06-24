@@ -5,33 +5,36 @@
         :style="{visibility: current !== 0 ? 'visible' : 'hidden'}" 
         class="nav-button previous" 
         @click="getPage(current-1, selectedGroup)">
-          prev
+          nazad
       </button>
       <button 
         :style="{visibility: isEnd ? 'hidden' : 'visible'}"
         class="nav-button next" 
         @click="getPage(current+1, selectedGroup)">
-          next
+          naprijed
       </button>
       <span 
         :style="{visibility: loadingPosts ? 'visible' : 'hidden'}"
         class="loader">
-          Loading posts...
+        <img src="../assets/spinner.svg" class="spinner">
       </span>
-      <div class='selector'>
+      <div class='select'>
         <select v-model="selectedGroup" @change="onSelectChange($event)">
             <option value="all" selected>Svi postovi</option>
             <option v-for="name in groupNames" :key="name.groupName" :value="name.groupName">{{name.groupFullName}}</option>
         </select>
       </div>
     </div>
-
-    <div class="posts-grid">
+    
+    <div v-if="posts.length" class="posts-grid">
       <PostCard 
         v-for="post in posts" 
         :key="post.hash" 
         :post="post">
       </PostCard>
+    </div>
+    <div class="nopost" v-else>
+      Nismo pronašli postove s tom grupom ljudi
     </div>
   </div>
 </template>
@@ -119,8 +122,8 @@ export default {
   z-index: 10;
   top: 0;
   left: 0;
-  background-color: green;
-  padding: 20px;
+  background-color: #4f4a41;
+  padding: 10px;
   width: 100%;
   justify-content: center;
 }
@@ -131,11 +134,17 @@ export default {
   margin-right: 10px;
   padding-right: 10px;
   padding-left: 10px;
-  border-radius: 11%;
+  border-radius: 8%;
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .loader {
   margin-right: 10px;
+}
+
+.spinner {
+  width: 50px;
 }
 
 .nav-button:hover {
@@ -148,5 +157,72 @@ export default {
 
 .next:hover {
   transform: translateX(2px);
+}
+
+.selector {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+/* Reset Select */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+  outline: 0;
+  box-shadow: none;
+  border: 0 !important;
+  background: #31475d;
+  background-image: none;
+  font-size: 30px;
+  font-weight: 600;
+}
+/* Remove IE arrow */
+select::-ms-expand {
+  display: none;
+}
+/* Custom Select */
+.select {
+  position: relative;
+  display: flex;
+  width: 20em;
+  height: 3em;
+  line-height: 3;
+  background: #2c3e50;
+  overflow: hidden;
+  border-radius: .25em;
+}
+select {
+  flex: 1;
+  padding: 0 .5em;
+  color: #fff;
+  cursor: pointer;
+}
+/* Arrow */
+.select::after {
+  content: '\25BC';
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0 1em;
+  background: #34495e;
+  cursor: pointer;
+  pointer-events: none;
+  -webkit-transition: .25s all ease;
+  -o-transition: .25s all ease;
+  transition: .25s all ease;
+  border-radius: 29%;
+}
+/* Transition */
+.select:hover::after {
+  color: #f39c12;
+}
+
+.nopost {
+  padding-top: 30%;
+  padding-left: 10%;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 30px;
 }
 </style>

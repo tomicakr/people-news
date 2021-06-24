@@ -3,8 +3,8 @@
     <a class="full-link" :href="post.url"></a>
     <div class="post-title">{{post.title}}</div>
     <div class="post-summary">{{postSummary}}</div>
-    <div class="post-date"><strong>Date:</strong> {{post.dateAdded}}</div>
-    <div v-if="postNames.length" class="post-names"><strong>Mentions:</strong> {{postNames}}</div>
+    <div class="post-date"><strong>Datum:</strong> {{post.dateAdded}}</div>
+    <div v-if="postNames.length" class="post-names"><strong>Spominju se:</strong> {{postNames}}</div>
   </div>
 </template>
 
@@ -35,7 +35,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  background: lightgreen;
+  background: #6e6658;
   border-radius: 10px;
   padding: 10px;
   transition: transform .2s;
@@ -50,6 +50,7 @@ export default {
   size: 10px;
   font-weight: 600;
   font-size: 20px;
+  color: whitesmoke;
 }
 
 .post-summary {

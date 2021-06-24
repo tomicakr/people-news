@@ -9,7 +9,7 @@ var cron = require('node-cron');
 const url = 'mongodb://localhost:27017';
 const dbName = 'newsPosts';
 const client = new MongoClient(url, {useNewUrlParser: true, useUnifiedTopology: true});
-const cronSpec = '0 0 */4 * * *';
+const cronSpec = '0 0 */5 * * *';
 
 async function scrapePosts(db, callback) {
     const ps = Object.values(portals);

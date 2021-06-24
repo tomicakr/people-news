@@ -15,7 +15,10 @@ export default {
 </script>
 
 <style>
+*{box-sizing: border-box;}
+
 body {
   font-family: Georgia, serif;
+  background-color: #88bdbc;
 }
 </style>
