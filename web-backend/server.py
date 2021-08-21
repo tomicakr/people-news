@@ -2,6 +2,7 @@ from flask import request, jsonify, Flask
 from pymongo import MongoClient, DESCENDING
 from db_models import to_post
 from flask_cors import CORS
+import requests
 
 app = Flask(__name__)
 CORS(app)
@@ -58,5 +59,15 @@ def add_group():
     obj = request.get_json()
     db.groups.insert_one(obj)
     return "success"
+
+@app.route('/health_check', methods=['GET'])
+def health_check():
+    ner_api = { 'serviceName': 'Ner api', 'status': True }
+    try:
+        ner_api_health = requests.get('http://localhost:5000/health_check').text
+    except:     
+        ner_api['status'] = False
+
+    return jsonify([ner_api])
 
 app.run(port=3000)

@@ -1,0 +1,2 @@
+NER_API - can have an endpoint can 
+scraper - can tell the backend he is working - but then how to know if it stopped working

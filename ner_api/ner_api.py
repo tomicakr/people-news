@@ -16,6 +16,10 @@ with open('./resources/names.txt', 'r', encoding='utf8') as file:
 called = {}
 lastCalled = { 'link': '' }
 
+@app.route('/health_check', methods=['GET'])
+def health_check():
+    return 'running'
+
 @app.route('/nerText', methods=['POST'])
 def get_this():
     data = request.get_json()

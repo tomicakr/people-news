@@ -18,11 +18,16 @@
         class="loader">
         <img src="../assets/spinner.svg" class="spinner">
       </span>
-      <div class='select'>
+      <div class="select">
         <select v-model="selectedGroup" @change="onSelectChange($event)">
             <option value="all" selected>Svi postovi</option>
             <option v-for="name in groupNames" :key="name.groupName" :value="name.groupName">{{name.groupFullName}}</option>
         </select>
+      </div>
+      <div class="status">
+        <span v-for="status,index in servicesStatus" :key="index">
+          {{index+1}}.{{status.serviceName}}: {{status.status}}
+        </span>
       </div>
     </div>
     
@@ -34,7 +39,7 @@
       </PostCard>
     </div>
     <div class="nopost" v-else>
-      Nismo pronašli postove s tom grupom ljudi
+      Ne postoje postovi s tom grupom ljudi
     </div>
   </div>
 </template>
@@ -55,10 +60,15 @@ export default {
       isEnd: false,
       loadingPosts: false,
       selectedGroup: 'all',
-      groupNames: null
+      groupNames: null,
+      servicesStatus: null
     }
   },
   async created() {
+    const res = await axios.get(`http://localhost:3000/health_check`)
+    if (res && res.data) {
+      this.servicesStatus = res.data
+    }
     this.getGroupNames()
     this.getPage.bind(this)(0, 'all')
   },
@@ -224,5 +234,10 @@ select {
   padding-left: 10%;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-size: 30px;
+}
+
+.status {
+  margin-left: 20px;
+  margin-top: 5px;
 }
 </style>
