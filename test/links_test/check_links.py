@@ -25,7 +25,7 @@ with open('links_with_found_names.txt', 'r', encoding='utf-8') as found_names:
         for link in annotated_dict:
             names_annotated = annotated_dict[link]
             if names_annotated[0] == '-':
-                error_dict[link] = ([0, 0], [], [])
+                error_dict[link] = ([0, 0, 0], [], [])
                 continue
 
             names_found = found_dict[link]
@@ -36,14 +36,26 @@ with open('links_with_found_names.txt', 'r', encoding='utf-8') as found_names:
                 if name in names_found:
                     really_found += 1
 
-            error_dict[link] = ([really_found, total], names_found, names_annotated)
-            
+            perc = 0 if total == 0 or really_found == 0 else float(really_found)/total
+            error_dict[link] = ([really_found, total, perc], names_found, names_annotated)
+
+
+        really_found_total = 0
+        annotated_total = 0  
         for link in error_dict:
-            er = error_dict[link]
+            [really_found, total, perc], names_found, names_annotated = error_dict[link]
+            really_found_total += really_found
+            annotated_total += total
             print()
             print()
             print()
-            print(link)
-            print('Found vs annotated: ', er[0])
-            print('Found', er[1])
-            print('Annotated', er[2])
+            print('Poveznica:', link)
+            print('P/O: \t\t{}/{} ({:.2f})'.format(really_found, total, perc))
+            print('Pronađeni:\t', names_found)
+            print('Označeni:\t', names_annotated)
+
+        perc_total = float(really_found_total)/annotated_total
+        print()
+        print()
+        print('Ukupno:')
+        print('     P/O: \t\t{}/{} ({:.2f})'.format(really_found_total, annotated_total, perc_total))
