@@ -25,9 +25,19 @@
         </select>
       </div>
       <div class="status">
-        <span v-for="status,index in servicesStatus" :key="index">
+        <button 
+          class="refresh-button" 
+          @click="healthCheck()">
+            <span v-if="isLoadingRefreshStatus">
+              <img src="../assets/spinner.svg" class="spinner" width="2px">
+            </span>
+            <span v-else>
+              refresh
+            </span>
+        </button>
+        <div v-for="status,index in servicesStatus" :key="index">
           {{index+1}}.{{status.serviceName}}: {{status.status}}
-        </span>
+        </div>
       </div>
     </div>
     
@@ -61,18 +71,24 @@ export default {
       loadingPosts: false,
       selectedGroup: 'all',
       groupNames: null,
-      servicesStatus: null
+      servicesStatus: null,
+      isLoadingRefreshStatus: false
     }
   },
   async created() {
-    const res = await axios.get(`http://localhost:3000/health_check`)
-    if (res && res.data) {
-      this.servicesStatus = res.data
-    }
+    this.healthCheck()
     this.getGroupNames()
     this.getPage.bind(this)(0, 'all')
   },
   methods: {
+    async healthCheck() {
+      this.isLoadingRefreshStatus = true;
+      const res = await axios.get(`http://localhost:3000/health_check`)
+      if (res && res.data) {
+        this.servicesStatus = res.data
+      }
+      this.isLoadingRefreshStatus = false;
+    },
     async getPage(page, group) {
       this.current = page
       this.loadingPosts = true
@@ -239,5 +255,16 @@ select {
 .status {
   margin-left: 20px;
   margin-top: 5px;
+}
+
+.refresh-button {
+  cursor: pointer;
+  text-transform: uppercase;
+  margin-right: 10px;
+  padding-right: 10px;
+  padding-left: 10px;
+  border-radius: 8%;
+  font-size: 20px;
+  font-weight: 700;
 }
 </style>

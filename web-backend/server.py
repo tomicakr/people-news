@@ -66,6 +66,7 @@ def add_group():
 def health_check():
     ner_api = { 'serviceName': 'Ner api', 'status': True }
     scraper = { 'serviceName': 'Scraper', 'status': True }
+    database = { 'serviceName': 'Database', 'status': True }
 
     if time.time() - scraper_working['time'] > 15:
         scraper['status'] = False
@@ -75,7 +76,11 @@ def health_check():
     except:     
         ner_api['status'] = False
 
-    return jsonify([ner_api, scraper])
+    try:
+        client.server_info()
+    except:
+        database['status'] = False
+    return jsonify([ner_api, scraper, database])
 
 @app.route('/health_check_report', methods=['POST'])
 def health_check_report():
