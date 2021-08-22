@@ -3,6 +3,7 @@ from pymongo import MongoClient, DESCENDING
 from db_models import to_post
 from flask_cors import CORS
 import requests
+import time
 
 app = Flask(__name__)
 CORS(app)
@@ -10,6 +11,7 @@ client = MongoClient('mongodb://localhost:27017/')
 db = client.newsPosts
 posts = db.posts
 groups = db.groups
+scraper_working = { 'status': True, 'time': time.time() }
 
 @app.route('/post/<title_hash>', methods=['GET'])
 def get_post(title_hash):
@@ -63,11 +65,22 @@ def add_group():
 @app.route('/health_check', methods=['GET'])
 def health_check():
     ner_api = { 'serviceName': 'Ner api', 'status': True }
+    scraper = { 'serviceName': 'Scraper', 'status': True }
+
+    if time.time() - scraper_working['time'] > 15:
+        scraper['status'] = False
+
     try:
         ner_api_health = requests.get('http://localhost:5000/health_check').text
     except:     
         ner_api['status'] = False
 
-    return jsonify([ner_api])
+    return jsonify([ner_api, scraper])
+
+@app.route('/health_check_report', methods=['POST'])
+def health_check_report():
+    obj = request.get_json() # not needed
+    scraper_working['time'] = time.time()
+    return 'success'
 
 app.run(port=3000)

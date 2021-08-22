@@ -4,12 +4,13 @@ const { insertManyPosts, postPresentInDb } = require('./db.js');
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 var cron = require('node-cron');
-
+const axios = require('axios');
 
 const url = 'mongodb://localhost:27017';
 const dbName = 'newsPosts';
 const client = new MongoClient(url, {useNewUrlParser: true, useUnifiedTopology: true});
 const cronSpec = '0 0 */5 * * *';
+const cronSpec2 = '*/5 * * * * *';
 
 async function scrapePosts(db, callback) {
     const ps = Object.values(portals);
@@ -39,11 +40,14 @@ client.connect(async function(err) {
     assert.equal(null, err);
     const db = client.db(dbName);
     console.log('<<<<<<<<<<<<SCRAPING>>>>>>>>>>>>>');
-    await scrapePosts(db);
     cron.schedule(cronSpec, async () => {
         console.log('<<<<<<<<<<<<SCRAPING>>>>>>>>>>>>> ', cronSpec, ' expired');
         await scrapePosts(db);
+    });    
+    cron.schedule(cronSpec2, async () => {
+        await axios.post('http://localhost:3000/health_check_report', { serviceName: 'scraper', status: 'running' });
     });
+    await scrapePosts(db);
 });
 
 if (process.platform === "win32") {
