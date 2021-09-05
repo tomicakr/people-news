@@ -12,6 +12,7 @@ db = client.newsPosts
 posts = db.posts
 groups = db.groups
 scraper_working = { 'status': True, 'time': time.time() }
+logs = []
 
 @app.route('/post/<title_hash>', methods=['GET'])
 def get_post(title_hash):
@@ -87,5 +88,15 @@ def health_check_report():
     obj = request.get_json() # not needed
     scraper_working['time'] = time.time()
     return 'success'
+
+@app.route('/log', methods=['POST'])
+def log():
+    obj = request.get_json()
+    logs.append(obj['text'])
+    return 'success'
+
+@app.route('/get_logs', methods=['GET'])
+def get_logs():
+    return jsonify(logs)
 
 app.run(port=3000)

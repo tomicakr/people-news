@@ -51,17 +51,20 @@
     <div class="nopost" v-else>
       Ne postoje postovi s tom grupom ljudi
     </div>
+    <LogsContainer />
   </div>
 </template>
 
 <script>
 import PostCard from './PostCard'
+import LogsContainer from './LogsContainer.vue'
 import axios from 'axios'
 
 export default {
   name: 'PostsContainer',
   components: {
     PostCard,
+    LogsContainer
   },
   data() {
     return {

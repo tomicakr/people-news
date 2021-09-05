@@ -5,6 +5,7 @@ const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 var cron = require('node-cron');
 const axios = require('axios');
+const { log } = require('./logging');
 
 const url = 'mongodb://localhost:27017';
 const dbName = 'newsPosts';
@@ -23,6 +24,7 @@ async function scrapePosts(db, callback) {
             const inDb = await postPresentInDb(db, post);
             if (!inDb) {
                 console.log(`Will insert: ${post.url}`);
+                log(`Will insert: ${post.url}`);
                 safeToInsert.push({
                     ...post,
                     dateAdded: new Date()
@@ -31,6 +33,7 @@ async function scrapePosts(db, callback) {
         }
         if (safeToInsert.length) {
             console.log('Inserting bulk...');
+            log('Inserting bulk...');
             insertManyPosts(db, safeToInsert, callback);
         }
     }
@@ -40,8 +43,10 @@ client.connect(async function(err) {
     assert.equal(null, err);
     const db = client.db(dbName);
     console.log('<<<<<<<<<<<<SCRAPING>>>>>>>>>>>>>');
+    log('<<<<<<<<<<<<SCRAPING>>>>>>>>>>>>>');
     cron.schedule(cronSpec, async () => {
         console.log('<<<<<<<<<<<<SCRAPING>>>>>>>>>>>>> ', cronSpec, ' expired');
+        log('<<<<<<<<<<<<SCRAPING>>>>>>>>>>>>> ' + cronSpec + ' expired');
         await scrapePosts(db);
     });    
     cron.schedule(cronSpec2, async () => {
