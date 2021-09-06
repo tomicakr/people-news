@@ -39,19 +39,25 @@
           {{index+1}}.{{status.serviceName}}: {{status.status}}
         </div>
       </div>
+      <button @click="onShowLogs">Toggle logs</button>
     </div>
+    <template v-if="showLogs">
+      <LogsContainer />
+    </template>
     
-    <div v-if="posts.length" class="posts-grid">
-      <PostCard 
-        v-for="post in posts" 
-        :key="post.hash" 
-        :post="post">
-      </PostCard>
-    </div>
-    <div class="nopost" v-else>
-      Ne postoje postovi s tom grupom ljudi
-    </div>
-    <LogsContainer />
+    <template v-else>
+      <div v-if="posts.length" class="posts-grid">
+        <PostCard 
+          v-for="post in posts" 
+          :key="post.hash" 
+          :post="post">
+        </PostCard>
+      </div>
+      <div class="nopost" v-else>
+        Ne postoje postovi s tom grupom ljudi
+      </div>
+    </template>
+    
   </div>
 </template>
 
@@ -75,7 +81,8 @@ export default {
       selectedGroup: 'all',
       groupNames: null,
       servicesStatus: null,
-      isLoadingRefreshStatus: false
+      isLoadingRefreshStatus: false,
+      showLogs: false
     }
   },
   async created() {
@@ -114,7 +121,10 @@ export default {
       }
     },
     onSelectChange(event) {
-      this.getPage(0, event.target.value);
+      this.getPage(0, event.target.value)
+    },
+    onShowLogs() {
+      this.showLogs = !this.showLogs
     }
   }
 }
