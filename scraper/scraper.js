@@ -22,6 +22,8 @@ async function scrape(portal) {
             const postInfo = await getPostInfo(postLinks[i], page, portal);
             if (postInfo) {
                 const res = await containsName(checkNames, postInfo.text, postInfo.url);
+                const names = Array.from(res.allNamedEntities);
+                console.log(`${postInfo.url}: ${names}`);
                 postsScraped.push({
                     ...postInfo,
                     names: Array.from(res.allNamedEntities),
