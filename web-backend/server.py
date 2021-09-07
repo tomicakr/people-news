@@ -4,6 +4,7 @@ from db_models import to_post
 from flask_cors import CORS
 import requests
 import time
+import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -12,7 +13,7 @@ db = client.newsPosts
 posts = db.posts
 groups = db.groups
 scraper_working = { 'status': True, 'time': time.time() }
-logs = []
+logs = {}
 
 @app.route('/post/<title_hash>', methods=['GET'])
 def get_post(title_hash):
@@ -49,6 +50,32 @@ def get_recent_by_group():
         posts_res.append(to_post(p))
     return jsonify(posts_res)
 
+@app.route('/analytics', methods=['GET'])
+def analytics():
+    group_name = request.args.get('group')
+    days = request.args.get('days')
+    from_date = datetime.datetime.now() - datetime.timedelta(days=int(days))
+    to_date = datetime.datetime.now()
+    group = groups.find_one({ 'groupName': group_name })
+    people = group['people']
+    print(from_date)
+    print(to_date)
+    relevant_posts = posts.find({"names": {"$in": people}, "dateAdded": {'$lte': to_date, '$gte': from_date}})
+    posts_res = []
+    for p in relevant_posts:
+        posts_res.append({'names': p['names'], 'dateAdded': p['dateAdded']})
+    
+    from_group_count = 0
+    for post in posts_res:
+        names_in_post = post['names']
+        post['in_from_group'] = []
+        for name_in_post in names_in_post:
+            if name_in_post in people:
+                post['in_from_group'].append(name_in_post)
+            
+        from_group_count += len(post['in_from_group'])
+    return jsonify({'posts': posts_res, 'fromGroupCount': from_group_count, 'groupName': group['groupFullName']})
+
 @app.route('/groupnames', methods=['GET'])
 def get_all_group_names():
     groups_db = groups.find({}, { 'groupName': 1, 'groupFullName': 1 })
@@ -67,7 +94,7 @@ def add_group():
 def health_check():
     ner_api = { 'serviceName': 'Ner api', 'status': True }
     scraper = { 'serviceName': 'Scraper', 'status': True }
-    database = { 'serviceName': 'Database', 'status': True }
+    database = { 'serviceName': 'Baza', 'status': True }
 
     if time.time() - scraper_working['time'] > 15:
         scraper['status'] = False
@@ -92,11 +119,18 @@ def health_check_report():
 @app.route('/log', methods=['POST'])
 def log():
     obj = request.get_json()
-    logs.append(obj['text'])
+    source = obj['source']
+    if source in logs:
+        logs[source].append(obj['text'])
+    else:
+        logs[source] = [obj['text']]
     return 'success'
 
 @app.route('/get_logs', methods=['GET'])
 def get_logs():
-    return jsonify(logs)
+    source = request.args.get('source')
+    if source not in logs:
+        return jsonify(['još nema logova za ' + source])
+    return jsonify(logs[source])
 
 app.run(port=3000)

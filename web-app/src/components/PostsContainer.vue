@@ -1,62 +1,89 @@
 <template>
   <div class="posts-container">
-    <div class="navigation-area">
-      <button 
-        :style="{visibility: current !== 0 ? 'visible' : 'hidden'}" 
-        class="nav-button previous" 
-        @click="getPage(current-1, selectedGroup)">
-          nazad
-      </button>
-      <button 
-        :style="{visibility: isEnd ? 'hidden' : 'visible'}"
-        class="nav-button next" 
-        @click="getPage(current+1, selectedGroup)">
-          naprijed
-      </button>
-      <span 
-        :style="{visibility: loadingPosts ? 'visible' : 'hidden'}"
-        class="loader">
-        <img src="../assets/spinner.svg" class="spinner">
-      </span>
-      <div class="select">
-        <select v-model="selectedGroup" @change="onSelectChange($event)">
-            <option value="all" selected>Svi postovi</option>
-            <option v-for="name in groupNames" :key="name.groupName" :value="name.groupName">{{name.groupFullName}}</option>
-        </select>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <div class="navigation">
+      <div 
+        v-if="activeTab !== 'posts'"
+        class="left-nav">
+        <button class="nav-action" @click="onActivateTab('posts')">Postovi</button>
       </div>
-      <div class="status">
+      <div 
+        v-if="activeTab === 'posts'"
+        class="left-nav"
+        :style="{visibility: activeTab === 'posts' ? 'visible' : 'hidden'}">
         <button 
-          class="refresh-button" 
-          @click="healthCheck()">
-            <span v-if="isLoadingRefreshStatus">
-              <img src="../assets/spinner.svg" class="spinner" width="2px">
-            </span>
-            <span v-else>
-              refresh
-            </span>
+          :style="{visibility: current !== 0 && activeTab === 'posts' ? 'visible' : 'hidden'}" 
+          class="nav-button previous" 
+          @click="getPage(current-1, selectedGroup)">
+          <i class="fa fa-arrow-left"></i>
         </button>
-        <div v-for="status,index in servicesStatus" :key="index">
-          {{index+1}}.{{status.serviceName}}: {{status.status}}
+        <button 
+          :style="{visibility: isEnd || activeTab !== 'posts' ? 'hidden' : 'visible'}"
+          class="nav-button next" 
+          @click="getPage(current+1, selectedGroup)">
+          <i class="fa fa-arrow-right"></i>
+        </button>
+        <span
+          :style="{visibility: loadingPosts ? 'visible' : 'hidden'}"
+          class="loader">
+          <img src="../assets/spinner.svg" class="spinner">
+        </span>
+        <div class="select">
+          <select v-model="selectedGroup" @change="onSelectChange($event)">
+              <option value="all" selected>Svi postovi</option>
+              <option v-for="name in groupNames" :key="name.groupName" :value="name.groupName">{{name.groupFullName}}</option>
+          </select>
         </div>
       </div>
-      <button @click="onShowLogs">Toggle logs</button>
+      <div class="right-nav">
+        <div class="action-buttons">
+          <button class="nav-action" @click="onActivateTab('logs')">Logovi</button>
+          <button class="nav-action" @click="onActivateTab('analytics')">Analitika</button>
+        </div>
+        <div class="status">
+          <button 
+            class="refresh-button" 
+            @click="healthCheck()">
+              <span v-if="isLoadingRefreshStatus">
+                <img src="../assets/spinner.svg" class="spinner" :style="{padding: '',fill: 'black', width: '20px'}">
+              </span>
+              <span v-else>
+                <i class="fa fa-refresh"></i>
+              </span>
+          </button>
+          <div class="status-text">
+            <div
+              class="status-line"
+              v-for="status,index in servicesStatus" 
+              :key="index"
+              :style="{'background-color': status ? 'green' : 'red'}">
+              {{status.serviceName}}: {{status.status ? 'radi' : 'ne radi'}}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <template v-if="showLogs">
-      <LogsContainer />
-    </template>
-    
-    <template v-else>
-      <div v-if="posts.length" class="posts-grid">
-        <PostCard 
-          v-for="post in posts" 
-          :key="post.hash" 
-          :post="post">
-        </PostCard>
-      </div>
-      <div class="nopost" v-else>
-        Ne postoje postovi s tom grupom ljudi
-      </div>
-    </template>
+
+    <div class="content">
+      <template v-if="activeTab === 'logs'">
+        <LogsContainer />
+      </template>
+      <template v-else-if="activeTab === 'posts'">
+        <div v-if="posts.length" class="posts-grid">
+          <PostCard 
+            v-for="post in posts" 
+            :key="post.hash" 
+            :post="post">
+          </PostCard>
+        </div>
+        <div class="nopost" v-else>
+          Ne postoje postovi s tom grupom ljudi
+        </div>
+      </template>
+      <template v-if="activeTab === 'analytics'">
+        <AnalyticsContainer :groups="groupNames"/>
+      </template>
+    </div>
     
   </div>
 </template>
@@ -64,13 +91,15 @@
 <script>
 import PostCard from './PostCard'
 import LogsContainer from './LogsContainer.vue'
+import AnalyticsContainer from './AnalyticsContainer.vue'
 import axios from 'axios'
 
 export default {
   name: 'PostsContainer',
   components: {
     PostCard,
-    LogsContainer
+    LogsContainer,
+    AnalyticsContainer
   },
   data() {
     return {
@@ -82,7 +111,7 @@ export default {
       groupNames: null,
       servicesStatus: null,
       isLoadingRefreshStatus: false,
-      showLogs: false
+      activeTab: 'posts'
     }
   },
   async created() {
@@ -123,8 +152,8 @@ export default {
     onSelectChange(event) {
       this.getPage(0, event.target.value)
     },
-    onShowLogs() {
-      this.showLogs = !this.showLogs
+    onActivateTab(tab) {
+      this.activeTab = tab
     }
   }
 }
@@ -133,10 +162,7 @@ export default {
 <style>
 .posts-container {
   margin: auto;
-  width: 70%;
-  padding: 10px;
-  margin: auto;
-  width: 70%;
+  width: 80%;
   padding: 10px;
 }
 
@@ -154,7 +180,11 @@ export default {
   }
 }
 
-.navigation-area {
+.content { 
+  margin-top: 6em;
+}
+
+.navigation {
   margin-bottom: 10px;
   display: flex;
   position: fixed;
@@ -162,9 +192,33 @@ export default {
   top: 0;
   left: 0;
   background-color: #4f4a41;
-  padding: 10px;
+  padding: 5px;
   width: 100%;
-  justify-content: center;
+  justify-content: space-between;
+}
+
+.left-nav {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+}
+
+.right-nav {
+  display: flex;
+  margin-right: 20px;
+  align-items: center;
+}
+
+.status {
+  display: flex;
+}
+
+.status-line {
+  border-radius: 5px;
+  border: 1px solid black;
+  margin-top: 1px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 .nav-button {
@@ -173,9 +227,22 @@ export default {
   margin-right: 10px;
   padding-right: 10px;
   padding-left: 10px;
-  border-radius: 8%;
+  border-radius: 15%;
   font-size: 20px;
   font-weight: 700;
+  height: 60%;
+}
+
+.nav-action {
+  cursor: pointer;
+  text-transform: uppercase;
+  margin-right: 5px;
+  padding-right: 10px;
+  padding-left: 10px;
+  border-radius: 8%;
+  font-size: 20px;
+  font-weight: 500;
+  height: 60%;
 }
 
 .loader {
@@ -214,7 +281,7 @@ select {
   border: 0 !important;
   background: #31475d;
   background-image: none;
-  font-size: 30px;
+  font-size: 20px;
   font-weight: 600;
 }
 /* Remove IE arrow */
@@ -225,7 +292,7 @@ select::-ms-expand {
 .select {
   position: relative;
   display: flex;
-  width: 20em;
+  width: 15em;
   height: 3em;
   line-height: 3;
   background: #2c3e50;
@@ -274,10 +341,10 @@ select {
   cursor: pointer;
   text-transform: uppercase;
   margin-right: 10px;
-  padding-right: 10px;
-  padding-left: 10px;
-  border-radius: 8%;
+  border-radius: 20%;
   font-size: 20px;
   font-weight: 700;
+  height: 30px;
+  stroke-width: 30px;
 }
 </style>

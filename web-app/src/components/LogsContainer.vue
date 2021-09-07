@@ -1,10 +1,11 @@
 <template>
-  <div class="main">
+  <div>
     <template v-if="loadingLogs">
-      Loading logs...
+      Učitavanje logova...
     </template>
     <template v-else>
-      <button @click="getLogs">refresh</button>
+      <button @click="getLogs('scraper')">Logovi scrapera</button>
+      <button @click="getLogs('ner')">Logovi ner-a</button>
       <br>
       <textarea class="logarea" v-model="textLogs" readonly>
       </textarea>
@@ -23,13 +24,13 @@ export default {
     }
   },
   async created() {
-    await this.getLogs()
+    await this.getLogs('scraper')
   },
   methods: {
-    getLogs: async function() {
+    getLogs: async function(source) {
       this.loadingLogs = true;
-      const res = await axios.get(`http://localhost:3000/get_logs`)
-      console.log('got logs')
+      const res = await axios.get(`http://localhost:3000/get_logs?source=${source}`)
+      console.log(`got ${source} logs`)
       if (res && res.data) {
         this.logs = res.data
       }

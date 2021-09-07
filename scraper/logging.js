@@ -1,7 +1,7 @@
 const axios = require('axios');
 
-async function log(text) {
-    await axios.post('http://localhost:3000/log', { text });
+async function log(text, source='scraper') {
+    await axios.post(`http://localhost:3000/log`, { source, text });
 }
 
 module.exports = {

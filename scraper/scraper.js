@@ -23,7 +23,7 @@ async function scrape(portal) {
             if (postInfo) {
                 const res = await containsName(checkNames, postInfo.text, postInfo.url);
                 const names = Array.from(res.allNamedEntities);
-                console.log(`${postInfo.url}: ${names}`);
+                log(`${postInfo.url}: ${names}`, 'ner');
                 postsScraped.push({
                     ...postInfo,
                     names: Array.from(res.allNamedEntities),
