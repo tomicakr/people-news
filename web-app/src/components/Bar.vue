@@ -11,6 +11,7 @@ export default {
         {
           label: "Broj pojava imena",
           data: this.counts,
+          backgroundColor: 'green'
         },
       ],
     };

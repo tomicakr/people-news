@@ -37,8 +37,21 @@
       </div>
       <div class="right-nav">
         <div class="action-buttons">
-          <button class="nav-action" @click="onActivateTab('logs')">Logovi</button>
-          <button class="nav-action" @click="onActivateTab('analytics')">Analitika</button>
+          <button 
+            class="nav-action action-right" 
+            :class="{active: activeTab === 'logs'}"
+            @click="onActivateTab('logs')">
+            Logovi</button>
+          <button 
+            class="nav-action action-right"
+            :class="{active: activeTab === 'analytics'}"
+            @click="onActivateTab('analytics')">
+            Analitika</button>
+          <button 
+            class="nav-action action-right" 
+            :class="{active: activeTab === 'config'}"
+            @click="onActivateTab('config')">
+            Konfiguracija</button>
         </div>
         <div class="status">
           <button 
@@ -56,7 +69,7 @@
               class="status-line"
               v-for="status,index in servicesStatus" 
               :key="index"
-              :style="{'background-color': status ? 'green' : 'red'}">
+              :style="{'background-color': status.status ? 'green' : 'red'}">
               {{status.serviceName}}: {{status.status ? 'radi' : 'ne radi'}}
             </div>
           </div>
@@ -83,6 +96,9 @@
       <template v-if="activeTab === 'analytics'">
         <AnalyticsContainer :groups="groupNames"/>
       </template>
+      <template v-if="activeTab === 'config'">
+        <ConfigPortalContainer />
+      </template>
     </div>
     
   </div>
@@ -92,6 +108,7 @@
 import PostCard from './PostCard'
 import LogsContainer from './LogsContainer.vue'
 import AnalyticsContainer from './AnalyticsContainer.vue'
+import ConfigPortalContainer from './ConfigPortalContainer.vue'
 import axios from 'axios'
 
 export default {
@@ -99,7 +116,8 @@ export default {
   components: {
     PostCard,
     LogsContainer,
-    AnalyticsContainer
+    AnalyticsContainer,
+    ConfigPortalContainer
   },
   data() {
     return {
@@ -213,6 +231,11 @@ export default {
   display: flex;
 }
 
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+}
+
 .status-line {
   border-radius: 5px;
   border: 1px solid black;
@@ -240,7 +263,7 @@ export default {
   padding-right: 10px;
   padding-left: 10px;
   border-radius: 8%;
-  font-size: 20px;
+  font-size: 12px;
   font-weight: 500;
   height: 60%;
 }
@@ -346,5 +369,14 @@ select {
   font-weight: 700;
   height: 30px;
   stroke-width: 30px;
+}
+
+.action-right:hover {
+  transform: translateX(-8px);
+}
+
+.active {
+  background-color: orange;
+  transform: translateX(-6px);
 }
 </style>

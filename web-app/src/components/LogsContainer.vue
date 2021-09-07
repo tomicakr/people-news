@@ -4,8 +4,18 @@
       Učitavanje logova...
     </template>
     <template v-else>
-      <button @click="getLogs('scraper')">Logovi scrapera</button>
-      <button @click="getLogs('ner')">Logovi ner-a</button>
+      <button 
+        @click="getLogs('scraper')"
+        class="tab-button"
+        :style="{'background-color': activeTab === 'scraper' ? 'white' : 'gray'}">
+        Logovi scrapera
+      </button>
+      <button 
+        @click="getLogs('ner')"
+        class="tab-button"
+        :style="{'background-color': activeTab === 'ner' ? 'white' : 'gray'}">
+        Logovi ner-a
+      </button>     
       <br>
       <textarea class="logarea" v-model="textLogs" readonly>
       </textarea>
@@ -20,7 +30,8 @@ export default {
   data() {
     return {
       logs: [],
-      loadingLogs: false
+      loadingLogs: false,
+      activeTab: 'scraper'
     }
   },
   async created() {
@@ -28,6 +39,7 @@ export default {
   },
   methods: {
     getLogs: async function(source) {
+      this.activeTab = source
       this.loadingLogs = true;
       const res = await axios.get(`http://localhost:3000/get_logs?source=${source}`)
       console.log(`got ${source} logs`)
@@ -53,5 +65,14 @@ export default {
 .logarea {
   width: 100%;
   height: 600px;
+}
+
+.tab-button {
+  margin-right: 2px;
+  cursor: pointer;
+}
+
+.tab-button:hover {
+  transform: scale(1.12);
 }
 </style>
