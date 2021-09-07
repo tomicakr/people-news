@@ -1,9 +1,11 @@
 <template>
   <div>
-    <button class="add-new" @click="addNewPortal">Dodaj novi portal</button>
+    <div class="upper">
+      <button class="add-new" @click="saveChanges">Spremi promjene</button>
+      <textarea v-if="successCode !== ''" class="successArea" v-model="successCode" readonly></textarea>
+    </div>
     <prism-editor class="my-editor" v-model="code" :highlight="highlighter" line-numbers></prism-editor>
     <textarea v-if="errorCode !== ''" class="errorArea" v-model="errorCode" readonly></textarea>
-    <textarea v-if="successCode !== ''" class="successArea" v-model="successCode" readonly></textarea>
   </div>
 </template>
  
@@ -57,14 +59,14 @@
       highlighter(code) {
         return highlight(code, languages.js)
       },
-      async addNewPortal() {
+      async saveChanges() {
         try {
           eval(this.code);
           this.errorCode = ''
-          this.successCode = 'To je validni JavaScript kod. Scraper će od sada tražiti postove na zadanom portalu...'
+          this.successCode = 'To je valjani JavaScript kod. Promjene su spremljene...'
         } catch (e) {
           this.successCode = ''
-          this.errorCode = 'To nije validni JavaScript kod. Provjerite još jednom:\n' + e
+          this.errorCode = 'To nije valjani JavaScript kod. Provjerite još jednom:\n' + e
         }
         await axios.post(`http://localhost:3000/new_portal`, { code: this.code })
       }
@@ -98,9 +100,10 @@
 }
 
 .successArea {
-  width: 100%;
-  height: 50px;
+  width: 80%;
+  height: 30px;
   background-color: green;
+  margin-left: 10px;
 }
 
 .add-new {
@@ -111,5 +114,9 @@
 
 .add-new:hover {
   transform: scale(1.12);
+}
+
+.upper {
+  display: flex;
 }
 </style> 
